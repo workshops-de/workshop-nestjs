@@ -21,13 +21,14 @@ export class BooksService {
     return Promise.resolve(this.bookCollection);
   }
 
-  order(id: string, dto: { amountOrdered: number }) {
-    const bookIndex = this.bookCollection.findIndex(book => book.id === id);
+  getById(id: string): Promise<Book | null> {
+    const candidate = this.bookCollection.find(book => book.id === id) ?? null;
 
-    if (bookIndex < 0) {
-      throw new NotFoundException(`Book with id ${id} not found`);
-    }
+    return Promise.resolve(candidate);
+  }
 
+  order(bookToOrder: Book, dto: { amountOrdered: number }) {
+    const bookIndex = this.bookCollection.findIndex(book => book.id === bookToOrder.id);
     const book = this.bookCollection[bookIndex];
 
     if (book.amount < dto.amountOrdered) {
@@ -41,15 +42,18 @@ export class BooksService {
     this.bookCollection[bookIndex] = book;
   }
 
-  rate(id: string, dto: { newRating: number }) {
+  rate(bookToRate: Book, dto: { newRating: number }) {
+    const bookIndex = this.bookCollection.findIndex(book => book.id === bookToRate.id);
+    const book = this.bookCollection[bookIndex];
+
     if (dto.newRating < 1 || dto.newRating > 5) {
       throw new DomainException(
         `Rating discarded: The given rating ${dto.newRating} does not fit in the range 1-5.`
       );
     }
 
-    this.bookCollection = this.bookCollection.map(book => {
-      return book.id === id ? { ...book, rating: dto.newRating } : book;
-    });
+    book.rating = dto.newRating;
+
+    this.bookCollection[bookIndex] = book;
   }
 }
