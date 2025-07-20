@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { RequestValidationPipe } from '../../request-validation/request-validation.pipe';
 import { Book } from '../book/book';
-import { CreateBookDto } from '../dtos/create-book.dto/create-book.dto';
+import { CreateBookDto, CreateBookDtoSchema } from '../dtos/create-book.dto/create-book.dto';
 import { BooksService } from './books.service';
 
 @Controller('books')
@@ -23,7 +23,7 @@ export class BooksController {
   }
 
   @Post()
-  @UsePipes(new RequestValidationPipe())
+  @UsePipes(new RequestValidationPipe(CreateBookDtoSchema))
   async create(@Body() dto: CreateBookDto): Promise<Pick<Book, 'id'>> {
     const createdBook = await this.booksService.create(dto);
 
