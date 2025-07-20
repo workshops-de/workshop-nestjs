@@ -1,5 +1,16 @@
-import { Body, Controller, Get, NotFoundException, Param, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  Post,
+  Put,
+  UsePipes
+} from '@nestjs/common';
+import { RequestValidationPipe } from '../../request-validation/request-validation.pipe';
 import { Book } from '../book/book';
+import { CreateBookDto } from '../dtos/create-book.dto/create-book.dto';
 import { BooksService } from './books.service';
 
 @Controller('books')
@@ -9,6 +20,14 @@ export class BooksController {
   @Get()
   getAll(): Promise<Book[]> {
     return this.booksService.getAll();
+  }
+
+  @Post()
+  @UsePipes(new RequestValidationPipe())
+  async create(@Body() dto: CreateBookDto): Promise<Pick<Book, 'id'>> {
+    const createdBook = await this.booksService.create(dto);
+
+    return { id: createdBook.id };
   }
 
   @Put(':id/order')
