@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Book } from '../book/book';
 import { randomUUID } from 'crypto';
 import { DomainException } from '../domain.exception';
