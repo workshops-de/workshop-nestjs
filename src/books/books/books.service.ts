@@ -3,6 +3,7 @@ import { Book } from '../book/book';
 import { randomUUID } from 'crypto';
 import { DomainException } from '../domain.exception';
 import { CreateBookDto } from '../dtos/create-book.dto/create-book.dto';
+import { EnvVariablesService } from '../../configuration/env-variables.service';
 
 @Injectable()
 export class BooksService {
@@ -17,6 +18,11 @@ export class BooksService {
       amount: 1000
     })
   ];
+
+  constructor(private envVariables: EnvVariablesService) {
+    console.log(this.envVariables.get('database_name'));
+    console.log(this.envVariables.get('database_server'));
+  }
 
   getAll(): Promise<Book[]> {
     return Promise.resolve(this.bookCollection);
